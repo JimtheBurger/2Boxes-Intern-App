@@ -22,7 +22,7 @@ class _Details extends State<Details> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  //much start, is essentially the home poage, but used for the details page which is a seperate page and api call regarding more details. No fancy searches or title
     return MaterialApp(
       home: Scaffold(
         body: DetailsWidget(details: _details)

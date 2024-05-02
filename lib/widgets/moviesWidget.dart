@@ -12,7 +12,7 @@ class MoviesWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
 
-    return ListView.builder(
+    return ListView.builder(  //This is the logic for displaying each movie in the list. It does this based on the information found in Movie.dart
       itemCount: movies.length, 
       itemBuilder: (context, index) {
 

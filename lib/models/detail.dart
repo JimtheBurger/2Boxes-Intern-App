@@ -53,7 +53,7 @@ class Detail{
   });
 
 
-  factory Detail.fromJson(Map<String, dynamic> json) {
+  factory Detail.fromJson(Map<String, dynamic> json) {  // this holds all of the Details Object. Many more things are accounted for since there are far more details.
     return Detail(
       title: json['Title'],
       year: json['Year'],

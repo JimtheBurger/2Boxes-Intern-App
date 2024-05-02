@@ -8,7 +8,7 @@ class DetailsWidget extends StatelessWidget{
   DetailsWidget({required this.details});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  //This handles the logic for how the details display
 
     return ListView(
       children: <Widget>[
@@ -18,7 +18,7 @@ class DetailsWidget extends StatelessWidget{
               colorFilter:
                   ColorFilter.mode(Colors.grey.shade300, BlendMode.screen),
               fit: BoxFit.cover,
-              image: NetworkImage(details.poster),
+              image: NetworkImage(details.poster),  //used a background poster to have something more intersting than white but something that is different with each poster
             ),
           ),
           child: Stack(
@@ -79,7 +79,7 @@ class DetailsWidget extends StatelessWidget{
         const SizedBox(
           height: 8,
         ),
-        const Padding(
+        const Padding(  //Lots of Copy/Pasting was done here. Feels like there could be a better implementation
           padding: EdgeInsets.only(left: 20.0, top: 15),
           child: Text(
             'Plot',
