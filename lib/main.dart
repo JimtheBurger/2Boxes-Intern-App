@@ -24,25 +24,36 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Movie> _movies = <Movie>[];
-  TextEditingController _searchController = TextEditingController();
+  final List<Movie> _movies = <Movie>[];
+  final TextEditingController _searchController = TextEditingController();
+  bool _isLoading = false;
+  int _page = 1;
 
   @override
   void initState() {
     super.initState();
-    _populateAllMovies("Boxes");
+    _populateAllMovies("Boxes", _page);
   }
 
-  void _populateAllMovies(String name) async {
-    final movies = await _fetchAllMovies(name);
+  void _populateAllMovies(String name, int page) async {
     setState(() {
-      _movies = movies;
+      _isLoading = true;
+    });
+
+    final movies = await _fetchAllMovies(name, page);
+    setState(() {
+      if (_page == 1) {
+        _movies.clear(); // Clearing the list only on the first page load
+      }
+      _movies.addAll(movies);
+      _isLoading = false;
+      _page++;
     });
   }
 
-  Future<List<Movie>> _fetchAllMovies(String name) async {
+  Future<List<Movie>> _fetchAllMovies(String name, int page) async {
     final response = await http.get(
-        Uri.parse("https://www.omdbapi.com/?s=$name&apikey=f509691a"));
+        Uri.parse("https://www.omdbapi.com/?s=$name&page=$page&apikey=f509691a"));
 
     if (response.statusCode == 200) {
       final result = jsonDecode(response.body);
@@ -93,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     title: Text("Search Movies"),
                     content: TextField(
                       controller: _searchController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "Enter movie name",
                       ),
                     ),
@@ -101,7 +112,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       TextButton(
                         child: Text("Search"),
                         onPressed: () {
-                          _populateAllMovies(_searchController.text);
+                          _page = 1; // Resetting page number to 1 on search
+                          _populateAllMovies(_searchController.text, 1);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -113,7 +125,29 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: MoviesWidget(movies: _movies),
+      body: Builder(
+        builder: (BuildContext context) {
+          return NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (!_isLoading &&
+                  scrollInfo.metrics.pixels ==
+                      scrollInfo.metrics.maxScrollExtent) {
+                if(_searchController.text != ""){
+                  _populateAllMovies(_searchController.text, _page);
+                } else{
+                  _populateAllMovies("Boxes", _page);
+                }
+              }
+              return true;
+            },
+            child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : MoviesWidget(movies: _movies),
+          );
+        },
+      ),
     );
   }
 }
