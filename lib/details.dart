@@ -23,7 +23,6 @@ class _Details extends State<Details> {
 
   @override
   Widget build(BuildContext context) {
-    Detail send = _details;
     return MaterialApp(
       home: Scaffold(
         body: DetailsWidget(details: _details)
